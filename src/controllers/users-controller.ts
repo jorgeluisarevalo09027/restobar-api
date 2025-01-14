@@ -41,7 +41,7 @@ class usersController {
                 res.status(400).json({error: "invalid password"});
                 return
             }
-            const token = generateToken(email);
+            const token = generateToken(email,userExist.name,userExist.id);
             
             res.status(200).json({ message:"user loged",token })
         } catch (error) {

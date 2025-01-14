@@ -13,8 +13,8 @@ if (!JWT_SECRET) {
 }
 
 // Función para generar un token JWT
-export function generateToken(email: string): string {
-    return jsonwebtoken.sign({ email }, JWT_SECRET, { expiresIn: '1h' });
+export function generateToken(email: string,name:string,id:string): string {
+    return jsonwebtoken.sign({ email, id, name }, JWT_SECRET, { expiresIn: '1h' });
 }
 
 // Middleware para verificar un token JWT

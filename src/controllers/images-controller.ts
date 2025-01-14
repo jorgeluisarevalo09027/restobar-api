@@ -7,20 +7,36 @@ class imagesController {
 
     async create(req:Request, res:Response){
         try {
-            const data = await ImagesModel.create(req.body);
-            res.status(201).json({ message:'mascota creada exitosamente', data })
+            const {id, name} = (req as any).user; 
+   
+            const { imageUrl } = req.body;
+    
+            if (!imageUrl) {
+                res.status(400).json({ error: 'Image URL is required' });
+                return
+            }
+    
+            const newImage = await ImagesModel.create({ userId: id, imageUrl , userName:name });
+            res.status(201).json(newImage);
+            return
         } catch (error) {
-            res.status(500).send(error)
-        }        
+            console.error('Error creating image:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return
+        }  
     }
     
     async getAll(req:Request, res:Response){
         try {
-            const data = await ImagesModel.getAll();
-            res.status(200).json({message:'lista retornada exitosamente',data})
+            const userId = (req as any).user.id; // Obtener el ID del usuario autenticado
+            const images = await ImagesModel.getAllByUser(userId);
+            res.json(images);
+            return
         } catch (error) {
-            res.status(500).json({ error: "Internal Server Error" });
-        }        
+            console.error('Error fetching images:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+            return
+        }   
     }
     
     async getOne(req:Request, res:Response){
