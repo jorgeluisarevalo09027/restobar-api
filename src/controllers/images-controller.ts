@@ -1,9 +1,64 @@
 import { Request, Response } from "express";
 
 import ImagesModel from '../models/images-model';
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import s3 from "../config/aws";
+import sharp from "sharp";
 
 class imagesController {
     constructor(){}
+
+    async uploadImage(req: Request, res: Response) {
+        try {
+            if (!req.file) {
+                res.status(400).json({ message: "No se recibió ninguna imagen." });
+                return
+            }
+    
+            const { id, name } = (req as any).user;
+           
+            
+            // Procesar la imagen con Sharp
+            const processedImage = await sharp(req.file.buffer)
+                .resize(800, 800, { fit: "inside" })
+                .toFormat("png")
+                .toBuffer();
+    
+            let imageUrl: string;
+    
+        
+            // Subir a AWS S3
+            const fileName = `images/${Date.now()}-${id}.png`;
+      
+            
+            const uploadParams = {
+                Bucket: process.env.AWS_BUCKET_NAME!,
+                Key: `images/${Date.now()}-${id}.png`,
+                Body: processedImage,
+                ContentType: "image/png"
+            };
+
+            const test = await s3.send(new PutObjectCommand(uploadParams))
+            imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.us-east-2.amazonaws.com/${fileName}`;
+
+    
+            // Guardar en MongoDB
+            const newImage = await ImagesModel.create({ userId: id, userName: name, imageUrl });
+            await newImage.save();
+    
+            res.status(201).json({ message: "Imagen subida exitosamente", image: newImage });
+    
+        } catch (error:any) {
+            console.error('Error completo:', {
+                message: error.message,
+                name: error.name,
+                code: error.$metadata?.httpStatusCode,
+                requestId: error.$metadata?.requestId
+            });
+            throw error;
+        }
+    };
+    
 
     async create(req:Request, res:Response){
         try {
@@ -61,7 +116,7 @@ class imagesController {
                 res.status(404).json({ error: "Imagen no encontrada" });
                 return
             }
-            res.status(200).json({message:'mascota actualizada exitosamente', data })
+            res.status(200).json({message:'Imagen actualizada exitosamente', data })
         } catch (error) {
             res.status(500).json({ error: "Internal Server Error" });
         }        
@@ -71,7 +126,7 @@ class imagesController {
         try {
             const { id } = req.params;
             const data = await ImagesModel.delete(id);
-            res.status(200).json({message:'mascota borrada exitosamente'})
+            res.status(200).json({message:'Imagen borrada exitosamente'})
         } catch (error) {
             res.status(500).json({ error: "Internal Server Error" });
         }        

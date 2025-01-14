@@ -7,7 +7,7 @@ class ImagesModel extends BaseModel<IImage> {
         super(images);
     }
     async getAllByUser(userId: string): Promise<IImage[]> {
-        return this.model.find({ user: userId });
+        return this.model.find({ userId: userId });
     }
 }
 
