@@ -1,5 +1,5 @@
 import express from 'express';
-import imagesController from '../controllers/images-controller';
+import imagesController from '../controllers/images.controller';
 import { tokenVerification } from '../helpers/auth';
 import upload from "../config/multer";
 

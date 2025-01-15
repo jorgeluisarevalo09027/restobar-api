@@ -1,6 +1,6 @@
-import users, { IUser } from '../schemas/usuarios-schema';
+import users, { IUser } from '../schemas/usuarios.schema';
 
-import BaseModel from './base-model';
+import BaseModel from './base.model';
 
 class UserModel extends BaseModel<IUser> {
     constructor() {

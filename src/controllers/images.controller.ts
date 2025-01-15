@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-import ImagesModel from '../models/images-model';
+import ImagesModel from '../models/images.model';
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import s3 from "../config/aws";
 import sharp from "sharp";

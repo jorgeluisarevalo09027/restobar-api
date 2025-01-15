@@ -1,6 +1,6 @@
 import express from 'express';
 import { loginLimiter } from '../helpers/auth';
-import usersControllers from '../controllers/users-controller'
+import usersControllers from '../controllers/users.controller'
 
 const route = express.Router();
 
