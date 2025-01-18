@@ -1,6 +1,7 @@
 import 'dotenv/config';
 
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import dbClient from './config/dbClient';
 import dotenv from 'dotenv';
 import express  from "express";
@@ -8,7 +9,12 @@ import routesImages  from './routes/images.route';
 import routesUsers from './routes/users.route';
 
 const app = express();
+const Cors = cors();
 dotenv.config();
+
+app.use(cors({
+    origin: 'http://localhost:4200', // Solo permite solicitudes desde tu front-end
+}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended:true }));

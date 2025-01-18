@@ -18,7 +18,8 @@ class usersController {
             }
             const encriptedKey =  await bcrypt.hash(key,10);
             const data = await UserModel.create({email,name,phone,key:encriptedKey});
-            res.status(200).json({message:'user created', data })
+            const token = generateToken(data.email,data.name,data.id);
+            res.status(200).json({message:'user created', token, data })
         } catch (error) {
             res.status(500).json({ error: "Internal Server Error" });
         }
@@ -43,7 +44,7 @@ class usersController {
             }
             const token = generateToken(email,userExist.name,userExist.id);
             
-            res.status(200).json({ message:"user loged",token })
+            res.status(200).json({ message:"user loged",token, userExist })
         } catch (error) {
             res.status(500).json({ error: "Internal Server Error" });
         }
