@@ -29,22 +29,22 @@ class usersController {
         try {
             const { email, key } = req.body;
             
-            const userExist = await UserModel.findUserByParams({ email });
+            const data = await UserModel.findUserByParams({ email });
             
-            if(!userExist){
+            if(!data){
                res.status(400).json({error: "user dosn't exist"});
                return
             } 
             
-            const validKey = await bcrypt.compare(key,userExist.key);
+            const validKey = await bcrypt.compare(key,data.key);
                         
             if(!validKey){
                 res.status(400).json({error: "invalid password"});
                 return
             }
-            const token = generateToken(email,userExist.name,userExist.id);
+            const token = generateToken(email,data.name,data.id);
             
-            res.status(200).json({ message:"user loged",token, userExist })
+            res.status(200).json({ message:"user loged",token, data })
         } catch (error) {
             res.status(500).json({ error: "Internal Server Error" });
         }
